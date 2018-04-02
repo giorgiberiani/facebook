@@ -43,7 +43,7 @@ public class Controller {
     @RequestMapping(method = RequestMethod.POST, value = "send")
     public ResponseEntity sendMessage(@RequestBody String message){
 
-
+          message = httpSession.getAttribute("user")+ ":    "+ message;
           System.out.println("message   "+ message);
               template.convertAndSend(fanout.getName(), "",message);
 

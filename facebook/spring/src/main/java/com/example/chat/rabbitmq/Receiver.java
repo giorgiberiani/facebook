@@ -32,7 +32,8 @@ public class  Receiver  {
 
 	@RabbitListener(queues = "#{autoDeleteQueue1.name}")
 	public void receive1(String in) throws InterruptedException {
-		simpMessagingTemplate.convertAndSend("topic/user",in);
+		System.out.println("received from rabbit and send " + in);
+		simpMessagingTemplate.convertAndSend("/chat",in);
 	}
 
 

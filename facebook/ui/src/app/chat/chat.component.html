@@ -5,7 +5,7 @@
 <form (ngSubmit)="SendMessage(f)" #f="ngForm">
   <div class = "form-group">
     <label for="message">message</label>
-    <input type="text " id="message" name="message" ngModel class="form-control">
+    <input type="text " cd uiid="message" name="message" ngModel class="form-control">
   </div>
   <button type="submit" class="btn btn-primary">send</button>
 </form>
@@ -13,14 +13,13 @@
 <br>
 <p>{{msg}}  </p>
 
-
 <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
   <div class="panel-heading"><h1>Messages</h1></div>
-  <div class="panel-body" *ngFor="let receivedMesage of books" >
-    <ul class="list-group">
+  <ul class="list-group"  >
+    <li class="list-group-item" *ngFor="let msg of receivedMessages">
       <div class="row">
-        <div class="col-md-2">{{receivedMesage}}</div>
+        <div class="col-md-2">{{msg}}</div>
       </div>
-    </ul>
-  </div>
+    </li>
+  </ul>
 </div>

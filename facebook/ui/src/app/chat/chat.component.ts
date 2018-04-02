@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
-import { ChatService } from '../chat.service';
+import {StompService} from "@stomp/ng2-stompjs";
+import {Message} from '@stomp/stompjs';
 
 
 @Component({
@@ -12,16 +13,20 @@ import { ChatService } from '../chat.service';
 export class ChatComponent implements OnInit {
 
 
-
   headers = new HttpHeaders(
     {'Content-Type': 'text/plain; charset=utf-8'});
 
-  msg : string;
+  receivedMessages: string[] = [];
   message: string;
 
   constructor(private http: HttpClient,
-              private chatService: ChatService) {
+              private _stompService: StompService) {
+    const stomp_subscription = this._stompService.subscribe('/chat');
 
+    stomp_subscription.subscribe((msg: Message) => {
+      this.receivedMessages.push(msg.body);
+      console.log('received', this.receivedMessages);
+    });
   }
 
   ngOnInit(): void {
@@ -29,23 +34,17 @@ export class ChatComponent implements OnInit {
 
 
   public response = (data) => {
-    console.log(data)
-  };
+    console.log(data);
+  }
 
   SendMessage(form: NgForm) {
+
     const name = form.value.message;
     this.message = name;
-    console.log(this.message)
+    console.log('send', this.message)
     this.http.post('/api/send', this.message, {headers: this.headers}).subscribe(
 
-    )
-
-    this.chatService
-      .getMessage()
-      .subscribe(msg => {
-        this.msg = "1st "+msg;
-        console.log(this.msg);
-      });
+    );
   }
 
 

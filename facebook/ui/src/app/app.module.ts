@@ -7,11 +7,36 @@ import {ChatComponent} from './chat/chat.component';
 import {RouterModule, Routes} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from "@angular/common/http";
-import {ChatService} from "./chat.service";
-import { SocketIoModule, SocketIoConfig,Socket } from 'ng-socket-io';
+import {StompConfig, StompService} from '@stomp/ng2-stompjs';
+import * as SockJS from 'sockjs-client';
 
-const config: SocketIoConfig = { url: '/websocket-example', options: {} };
+export function socketProvider() {
+  return new SockJS('http://localhost:8080/ws');
+}
 
+const stompConfig: StompConfig = {
+  // Which server?
+  url: socketProvider,
+
+  // Headers
+  // Typical keys: login, passcode, host
+  headers: {
+    login: 'guest',
+    passcode: 'guest'
+  },
+
+  // How often to heartbeat?
+  // Interval in milliseconds, set to 0 to disable
+  heartbeat_in: 0, // Typical value 0 - disabled
+  heartbeat_out: 20000, // Typical value 20000 - every 20 seconds
+  // Wait in milliseconds before attempting auto reconnect
+  // Set to 0 to disable
+  // Typical value 5000 (5 seconds)
+  reconnect_delay: 5000,
+
+  // Will log diagnostics on console
+  debug: true
+};
 
 const appRoutes: Routes = [
   {path: '', component: LoginComponent},
@@ -28,10 +53,12 @@ const appRoutes: Routes = [
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    SocketIoModule.forRoot(config),
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [ChatService],
+  providers: [StompService, {
+    provide: StompConfig,
+    useValue: stompConfig
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
